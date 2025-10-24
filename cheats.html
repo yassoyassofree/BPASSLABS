@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>◢◤ CONSOLE INJECTOR ◥◣</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #000;
+            color: #00ff00;
+            font-family: 'Share Tech Mono', monospace;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.1;
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        .glitch-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent 48%, rgba(0, 255, 0, 0.03) 49%, rgba(0, 255, 0, 0.03) 51%, transparent 52%);
+            animation: scanlines 0.1s linear infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        @keyframes scanlines {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(4px); }
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            text-shadow: 0 0 20px #00ff00;
+        }
+        
+        .title {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+            from { text-shadow: 0 0 20px #00ff00; }
+            to { text-shadow: 0 0 30px #00ff00, 0 0 40px #00ff00; }
+        }
+        
+        .subtitle {
+            color: #ff0080;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px #ff0080;
+        }
+        
+        .terminal-box {
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #00ff00;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 
+                0 0 20px rgba(0, 255, 0, 0.3),
+                inset 0 0 20px rgba(0, 255, 0, 0.1);
+            animation: pulse-border 3s ease-in-out infinite;
+        }
+        
+        @keyframes pulse-border {
+            0%, 100% { border-color: #00ff00; }
+            50% { border-color: #00ffff; }
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .label {
+            display: block;
+            color: #00ffff;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 0 0 5px #00ffff;
+        }
+        
+        .input-field {
+            width: 100%;
+            background: rgba(0, 20, 0, 0.8);
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            padding: 12px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.9rem;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .input-field:focus {
+            outline: none;
+            border-color: #00ffff;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+            background: rgba(0, 30, 0, 0.9);
+        }
+        
+        .textarea {
+            min-height: 120px;
+            resize: vertical;
+            font-family: 'Share Tech Mono', monospace;
+        }
+        
+        .hack-button {
+            width: 100%;
+            background: linear-gradient(45deg, #ff0080, #00ff00);
+            border: none;
+            color: #000;
+            padding: 15px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hack-button:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 30px rgba(255, 0, 128, 0.7);
+        }
+        
+        .hack-button:active {
+            transform: scale(0.98);
+        }
+        
+        .hack-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+        
+        .hack-button:hover::before {
+            left: 100%;
+        }
+        
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #ff0080;
+            border-radius: 5px;
+            color: #ff0080;
+            text-align: center;
+            display: none;
+            animation: blink 1s ease-in-out infinite;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .warning {
+            background: rgba(20, 0, 0, 0.8);
+            border: 1px solid #ff4444;
+            color: #ff4444;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        
+        .cyber-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 255, 0, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 0, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -2;
+            animation: grid-move 20s linear infinite;
+        }
+        
+        @keyframes grid-move {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+        
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #00ff00;
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+            box-shadow: 0 0 6px #00ff00;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0) rotate(0deg); }
+            25% { transform: translateY(-20px) translateX(10px) rotate(90deg); }
+            50% { transform: translateY(-40px) translateX(-10px) rotate(180deg); }
+            75% { transform: translateY(-20px) translateX(15px) rotate(270deg); }
+        }
+        
+        .console-preview {
+            background: rgba(0, 0, 0, 0.95);
+            border: 1px solid #666;
+            border-radius: 5px;
+            padding: 10px;
+            margin-top: 10px;
+            color: #ccc;
+            font-size: 0.8rem;
+            max-height: 100px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="cyber-grid"></div>
+    <div class="glitch-overlay"></div>
+    <div class="particles" id="particles"></div>
+    
+    <div class="container">
+        <div class="header">
+            <h1 class="title">◢◤ CONSOLE INJECTOR ◥◣</h1>
+            <p class="subtitle">BREACH • INJECT • EXECUTE</p>
+        </div>
+        
+        <div class="warning">
+            ⚠️ WARNING: This tool opens websites in new tabs and executes JavaScript code. Use responsibly! ⚠️
+        </div>
+        
+        <div class="terminal-box">
+            <div class="input-group">
+                <label class="label" for="targetUrl">🎯 TARGET URL</label>
+                <input type="url" id="targetUrl" class="input-field" placeholder="https://example.com" required>
+            </div>
+            
+            <div class="input-group">
+                <label class="label" for="consoleCode">💾 CONSOLE CODE PAYLOAD</label>
+                <textarea id="consoleCode" class="input-field textarea" placeholder="console.log('Hacked!');&#10;document.body.style.background = 'red';&#10;alert('System breached!');" required></textarea>
+                <div class="console-preview" id="codePreview"></div>
+            </div>
+            
+            <button class="hack-button" onclick="executeHack()">
+                ◢◤ INITIATE BREACH ◥◣
+            </button>
+        </div>
+        
+        <div class="status" id="status"></div>
+    </div>
+
+    <script>
+        // Create floating particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (Math.random() * 4 + 4) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+        
+        // Update code preview
+        document.getElementById('consoleCode').addEventListener('input', function() {
+            const preview = document.getElementById('codePreview');
+            const code = this.value;
+            if (code.trim()) {
+                preview.style.display = 'block';
+                preview.textContent = '> ' + code.split('\n').join('\n> ');
+            } else {
+                preview.style.display = 'none';
+            }
+        });
+        
+        // Execute the hack
+        function executeHack() {
+            const url = document.getElementById('targetUrl').value.trim();
+            const code = document.getElementById('consoleCode').value.trim();
+            const status = document.getElementById('status');
+            
+            if (!url || !code) {
+                showStatus('❌ ERROR: Both URL and console code are required!', 'error');
+                return;
+            }
+            
+            try {
+                // Validate URL
+                new URL(url);
+                
+                showStatus('🔥 INITIATING BREACH...', 'loading');
+                
+                setTimeout(() => {
+                    // Create the payload
+                    const payload = `
+                        setTimeout(() => {
+                            try {
+                                ${code}
+                                console.log('%c🔥 CODE INJECTED SUCCESSFULLY! 🔥', 'color: #00ff00; font-size: 16px; font-weight: bold;');
+                            } catch (error) {
+                                console.error('Injection Error:', error);
+                            }
+                        }, 1000);
+                    `;
+                    
+                    // Encode the payload
+                    const encodedPayload = btoa(payload);
+                    
+                    // Create the JavaScript URL
+                    const jsUrl = `javascript:(function(){eval(atob('${encodedPayload}'))})();`;
+                    
+                    // Open the target URL
+                    const newWindow = window.open(url, '_blank');
+                    
+                    if (newWindow) {
+                        // Wait a bit then execute the payload
+                        setTimeout(() => {
+                            try {
+                                newWindow.location.href = jsUrl;
+                                showStatus('✅ BREACH SUCCESSFUL! Code injected into target.', 'success');
+                            } catch (error) {
+                                showStatus('⚠️ PAYLOAD DEPLOYED! Check target window manually if needed.', 'warning');
+                            }
+                        }, 2000);
+                    } else {
+                        showStatus('❌ BLOCKED: Pop-up blocker prevented window opening!', 'error');
+                    }
+                }, 1000);
+                
+            } catch (error) {
+                showStatus('❌ INVALID URL: Please enter a valid URL!', 'error');
+            }
+        }
+        
+        function showStatus(message, type) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.style.display = 'block';
+            status.className = 'status ' + type;
+            
+            setTimeout(() => {
+                status.style.display = 'none';
+            }, 5000);
+        }
+        
+        // Add some random glitch effects
+        function addGlitchEffects() {
+            const title = document.querySelector('.title');
+            setInterval(() => {
+                if (Math.random() < 0.1) {
+                    title.style.transform = 'translateX(' + (Math.random() - 0.5) * 10 + 'px)';
+                    setTimeout(() => {
+                        title.style.transform = 'translateX(0)';
+                    }, 100);
+                }
+            }, 1000);
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            createParticles();
+            addGlitchEffects();
+        });
+        
+        // Add enter key support
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter' && event.ctrlKey) {
+                executeHack();
+            }
+        });
+    </script>
+</body>
+</html>

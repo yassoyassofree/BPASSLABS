@@ -1,0 +1,10 @@
+- Add abilities object with fire (free, damage 100), speed, freeze, ally spaceship (each 100k)
+- Add abilities to shop modal
+- Add key listener for 'a' to upgrade ability level with 10s cooldown
+- Implement cooldown timer
+- Apply fire ability: change bullet color to red, set damage to 100
+- Apply speed ability: increase player speed
+- Apply freeze ability: slow enemy movement
+- Apply ally spaceship: spawn ally ship for 50s that shoots at enemies
+- Update HUD to show abilities
+- Save/load abilities in progress
